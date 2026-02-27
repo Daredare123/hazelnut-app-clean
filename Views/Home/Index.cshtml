@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center mt-5">
+    <h1 class="display-4">Welcome to HazelnutVeb</h1>
+    <p class="lead">This is the public home page.</p>
+    <hr class="my-4">
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <p>Please <a href="/Account/Login">login</a> to access the Dashboard.</p>
+        <a class="btn btn-primary btn-lg" href="/Account/Login" role="button">Login</a>
+    }
+    else
+    {
+        <p>You are logged in as <strong>@User.Identity.Name</strong>.</p>
+        <a class="btn btn-success btn-lg" href="/Home/Dashboard" role="button">Go to Dashboard</a>
+    }
+</div>

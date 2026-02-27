@@ -1,0 +1,51 @@
+@model HazelnutVeb.Models.Inventory
+
+@{
+    ViewData["Title"] = "Inventory Management";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 text-center">
+        <h2 class="fw-bold mb-4 text-dark"><i class="bi bi-box-seam me-2 text-primary"></i>Inventory Management</h2>
+        
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+            <div class="card-header bg-dark text-white py-4 border-0">
+                <h5 class="mb-0 text-uppercase opacity-75 fw-bold letter-spacing-1">Current Stock</h5>
+            </div>
+            <div class="card-body p-5">
+                <div class="mb-4">
+                     <i class="bi bi-nut fs-1 text-secondary opacity-25 d-block mb-3"></i>
+                     <h1 class="display-1 fw-bolder text-dark mb-0">@Model.TotalKg.ToString("N2")</h1>
+                     <span class="text-uppercase fw-bold text-muted letter-spacing-2">Kilograms</span>
+                </div>
+                
+                @if (Model.TotalKg <= 5)
+                {
+                    <div class="alert alert-danger d-inline-flex align-items-center mb-4 px-4 py-3 rounded-pill shadow-sm">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                        <span class="fw-bold">LOW STOCK WARNING (5kg or less)</span>
+                    </div>
+                }
+                else
+                {
+                     <div class="mb-4">
+                         <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill fw-bold">
+                             <i class="bi bi-check-circle-fill me-1"></i> Stock Healthy
+                         </span>
+                     </div>
+                }
+
+                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                    <a asp-action="Update" class="btn btn-warning btn-lg px-5 shadow fw-bold text-white rounded-pill">
+                        <i class="bi bi-pencil-square me-2"></i>Adjust Stock
+                    </a>
+                </div>
+            </div>
+             <div class="card-footer bg-light p-3 border-0">
+                 <a asp-controller="Home" asp-action="Dashboard" class="text-decoration-none text-muted small fw-bold text-uppercase">
+                     <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                 </a>
+            </div>
+        </div>
+    </div>
+</div>

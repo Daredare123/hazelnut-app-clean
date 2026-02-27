@@ -1,0 +1,88 @@
+@model HazelnutVeb.Models.ClientReportViewModel
+@{
+    ViewData["Title"] = "Client Report - " + Model.ClientName;
+}
+
+<div class="row align-items-center mb-4">
+    <div class="col-md-6">
+        <h2 class="fw-bold mb-0 text-dark"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Client Purchase Report</h2>
+        <p class="text-muted small mb-0">Purchasing history for <strong>@Model.ClientName</strong></p>
+    </div>
+    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <a asp-action="Index" class="btn btn-outline-secondary d-inline-flex align-items-center shadow-sm">
+            <i class="bi bi-arrow-left me-2"></i> Back to Clients
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Filter Sidebar -->
+    <div class="col-lg-3 mb-4 mb-lg-0">
+        <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top: 20px; z-index: 10;">
+             <div class="card-header bg-light border-0 py-3 rounded-top-4">
+                <h6 class="mb-0 fw-bold text-uppercase small text-secondary">Filter Options</h6>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Report" method="get">
+                    <input type="hidden" name="clientId" value="@Model.ClientId" />
+                    <div class="mb-3">
+                        <label for="startDate" class="form-label text-secondary fw-bold text-uppercase small">From</label>
+                        <input type="date" name="startDate" id="startDate" class="form-control border-0 bg-light fw-bold" value="@Model.StartDate?.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="mb-4">
+                        <label for="endDate" class="form-label text-secondary fw-bold text-uppercase small">To</label>
+                        <input type="date" name="endDate" id="endDate" class="form-control border-0 bg-light fw-bold" value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 shadow fw-bold text-uppercase"><i class="bi bi-funnel me-2"></i>Filter Results</button>
+                    <a asp-action="Report" asp-route-clientId="@Model.ClientId" class="btn btn-light mt-2 w-100 text-secondary small">Clear Filters</a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Content -->
+    <div class="col-lg-9">
+         <!-- Financial Cards -->
+        <div class="row mb-4">
+            <div class="col-md-12 mb-3">
+                 <div class="card bg-success text-white shadow border-0 rounded-4 h-100 position-relative overflow-hidden">
+                     <i class="bi bi-cash position-absolute top-0 end-0 p-3 opacity-25 fs-1"></i>
+                     <div class="card-body p-4">
+                        <h6 class="text-uppercase opacity-75 small fw-bold mb-2">Total Revenue from @Model.ClientName</h6>
+                        <h3 class="mb-0 fw-bold">@Model.TotalRevenue.ToString("N2") MKD</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="card shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="flex-shrink-0 bg-info bg-opacity-10 p-3 rounded-circle me-3">
+                            <i class="bi bi-box-seam text-info fs-3"></i>
+                        </div>
+                        <div>
+                             <h6 class="text-secondary text-uppercase opacity-75 small fw-bold mb-1">Total Quantity Purchased</h6>
+                             <h4 class="mb-0 fw-bold text-dark">@Model.TotalQuantity.ToString("N2") <span class="fs-6 text-muted">kg</span></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                 <div class="card shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="flex-shrink-0 bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                            <i class="bi bi-receipt text-primary fs-3"></i>
+                        </div>
+                        <div>
+                             <h6 class="text-secondary text-uppercase opacity-75 small fw-bold mb-1">Total Number of Sales</h6>
+                             <h4 class="mb-0 fw-bold text-dark">@Model.TotalSalesCount</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

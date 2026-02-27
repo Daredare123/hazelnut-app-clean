@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "Client Dashboard";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h2 class="mb-4">Welcome, @User.Identity?.Name!</h2>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <p class="lead mb-4">Manage your hazelnut reservations easily from your dashboard.</p>
+                    <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                        <a asp-controller="Reservations" asp-action="Create" class="btn btn-primary btn-lg px-4 me-md-2">
+                            <i class="bi bi-plus-circle me-1"></i> Create Reservation
+                        </a>
+                        <a asp-controller="Reservations" asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
+                            <i class="bi bi-clock-history me-1"></i> My Reservations
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

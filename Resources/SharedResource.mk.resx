@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Контролна табла</value>
+  </data>
+  <data name="Sales" xml:space="preserve">
+    <value>Продажби</value>
+  </data>
+  <data name="Reservations" xml:space="preserve">
+    <value>Резервации</value>
+  </data>
+  <data name="Expenses" xml:space="preserve">
+    <value>Трошоци</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>Залиха</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Извештаи</value>
+  </data>
+  <data name="Clients" xml:space="preserve">
+    <value>Клиенти</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Одјава</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Профил</value>
+  </data>
+</root>

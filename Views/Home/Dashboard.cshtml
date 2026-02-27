@@ -1,0 +1,204 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-dark">Dashboard</h1>
+            <p class="text-muted">Overview of your business performance.</p>
+        </div>
+    </div>
+
+    <!-- Inventory Section -->
+    <div class="row mb-5">
+        <div class="col-md-6 offset-md-3">
+            @{
+                double stock = ViewBag.CurrentStock ?? 0;
+                bool lowStock = stock <= 5;
+                string cardClass = lowStock ? "bg-warning" : "bg-dark";
+                string textClass = lowStock ? "text-dark" : "text-white";
+                string iconClass = lowStock ? "bi-exclamation-triangle-fill" : "bi-box-seam";
+            }
+            <div class="card @cardClass @textClass shadow border-0 rounded-4 text-center transform-hover">
+                <div class="card-body py-5">
+                    <h5 class="card-title text-uppercase fw-bold opacity-75"><i class="bi @iconClass me-2"></i>Current Inventory</h5>
+                    <p class="display-1 fw-bold my-3">@stock.ToString("N0") <span class="fs-4">kg</span></p>
+                    @if (lowStock)
+                    {
+                        <div class="badge bg-danger fs-6 mt-2 p-2 px-3 fw-bold shadow-sm">
+                            LOW STOCK WARNING (5kg or less)
+                        </div>
+                    }
+                    else
+                    {
+                         <p class="card-text opacity-75">Hazelnuts available in stock</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Overview Section -->
+    <div class="row mb-4">
+        <div class="col-12 mb-3">
+            <h4 class="text-secondary opacity-75 text-uppercase fs-6 fw-bold border-bottom pb-2">Financial Overview</h4>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white shadow border-0 rounded-4 mb-3 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title text-uppercase opacity-75">Total Revenue</h6>
+                            <h2 class="display-6 fw-bold mb-0">@((ViewBag.TotalSales ?? 0).ToString("N2")) ден</h2>
+                        </div>
+                        <i class="bi bi-currency-dollar fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-danger text-white shadow border-0 rounded-4 mb-3 h-100">
+                <div class="card-body p-4">
+                     <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title text-uppercase opacity-75">Total Expenses</h6>
+                            <h2 class="display-6 fw-bold mb-0">@((ViewBag.TotalExpenses ?? 0).ToString("N2")) ден</h2>
+                        </div>
+                        <i class="bi bi-dash-circle fs-1 opacity-50"></i>
+                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @{
+                double profit = ViewBag.TotalProfit ?? 0;
+                string profitColor = profit >= 0 ? "text-success" : "text-danger";
+            }
+            <div class="card bg-white border-0 shadow rounded-4 mb-3 h-100">
+                <div class="card-body p-4">
+                     <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title text-uppercase text-secondary opacity-75">Net Profit</h6>
+                            <h2 class="display-6 fw-bold mb-0 @profitColor">@profit.ToString("N2") ден</h2>
+                        </div>
+                        <i class="bi bi-graph-up-arrow fs-1 text-secondary opacity-25"></i>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-3">
+                <div class="card-body p-4 d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                         <i class="bi bi-cash-stack text-success fs-3"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-1 small fw-bold">Total Sales Amount</h6>
+                        <h4 class="mb-0 fw-bold">@((ViewBag.TotalSalesAmount ?? 0).ToString("N2")) ден</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-3">
+                 <div class="card-body p-4 d-flex align-items-center">
+                    <div class="bg-info bg-opacity-10 p-3 rounded-circle me-3">
+                         <i class="bi bi-box-seam text-info fs-3"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted text-uppercase mb-1 small fw-bold">Total Kg Sold</h6>
+                        <h4 class="mb-0 fw-bold">@((ViewBag.TotalQuantityKg ?? 0).ToString("N2")) kg</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-3">
+                 <div class="card-body p-4 d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                         <i class="bi bi-receipt text-primary fs-3"></i>
+                    </div>
+                    <div>
+                         <h6 class="text-muted text-uppercase mb-1 small fw-bold">Number of Sales</h6>
+                        <h4 class="mb-0 fw-bold">@(ViewBag.SalesCount ?? 0)</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Performance Section -->
+    <div class="row mb-5">
+        <div class="col-12 mb-3">
+            <h4 class="text-secondary opacity-75 text-uppercase fs-6 fw-bold border-bottom pb-2">Monthly Performance (@DateTime.Now.ToString("MMMM yyyy"))</h4>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-white border-bottom border-4 border-success shadow-sm rounded-3 mb-3">
+                <div class="card-body">
+                    <h6 class="card-title text-muted text-uppercase small fw-bold">Monthly Revenue</h6>
+                    <p class="card-text h3 fw-bold text-success">@((ViewBag.MonthlyAmount ?? 0).ToString("N2")) ден</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-white border-bottom border-4 border-info shadow-sm rounded-3 mb-3">
+                <div class="card-body">
+                    <h6 class="card-title text-muted text-uppercase small fw-bold">Monthly Kg Sold</h6>
+                    <p class="card-text h3 fw-bold text-info">@((ViewBag.MonthlyKg ?? 0).ToString("N2")) kg</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+             <div class="card bg-white border-bottom border-4 border-primary shadow-sm rounded-3 mb-3">
+                <div class="card-body">
+                    <h6 class="card-title text-muted text-uppercase small fw-bold">Monthly Transactions</h6>
+                    <p class="card-text h3 fw-bold text-primary">@(ViewBag.MonthlyCount ?? 0)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center mt-auto">
+        <!-- Quick Actions -->
+         <div class="col-md-4 mb-4">
+             <a asp-controller="Sales" asp-action="Index" class="card card-link text-decoration-none h-100 shadow-sm border-0 hover-lift">
+                 <div class="card-body d-flex flex-column align-items-center justify-content-center p-5">
+                     <i class="bi bi-cart-plus fs-1 text-primary mb-3"></i>
+                     <h5 class="fw-bold text-dark">Manage Sales</h5>
+                     <p class="text-muted small">View and add new sales</p>
+                 </div>
+             </a>
+         </div>
+
+         <div class="col-md-4 mb-4">
+             <a asp-controller="Expenses" asp-action="Index" class="card card-link text-decoration-none h-100 shadow-sm border-0 hover-lift">
+                 <div class="card-body d-flex flex-column align-items-center justify-content-center p-5">
+                     <i class="bi bi-wallet2 fs-1 text-warning mb-3"></i>
+                     <h5 class="fw-bold text-dark">Manage Expenses</h5>
+                     <p class="text-muted small">Track your expenses</p>
+                 </div>
+             </a>
+         </div>
+
+         <div class="col-md-4 mb-4">
+             <div class="card h-100 shadow-sm border-0 grayscale">
+                 <div class="card-body d-flex flex-column align-items-center justify-content-center p-5">
+                     <i class="bi bi-people fs-1 text-secondary mb-3"></i>
+                     <h5 class="fw-bold text-secondary">Clients</h5>
+                     <p class="text-muted small">Coming Soon</p>
+                 </div>
+             </div>
+         </div>
+    </div>
+</div>
+
+<style>
+    .hover-lift { transition: transform 0.2s, box-shadow 0.2s; }
+    .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+    .grayscale { filter: grayscale(100%); opacity: 0.7; }
+</style>
