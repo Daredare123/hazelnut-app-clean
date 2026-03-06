@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Ensure configuration includes environment variables (default behavior is usually enough, but explicitly preserving it)
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
@@ -90,8 +90,19 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 
-FirebaseApp.Create(new AppOptions()
+try
 {
-    Credential = GoogleCredential.FromFile("Firebase/firebase-key.json")
-});
+    var firebaseJson = Environment.GetEnvironmentVariable("FIREBASE_CONFIG");
+    if (!string.IsNullOrEmpty(firebaseJson) && FirebaseApp.DefaultInstance == null)
+    {
+        FirebaseApp.Create(new AppOptions()
+        {
+            Credential = GoogleCredential.FromJson(firebaseJson)
+        });
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Firebase initialization failed: {ex.Message}");
+}
 app.Run();
