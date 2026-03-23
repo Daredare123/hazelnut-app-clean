@@ -13,7 +13,7 @@
                 <div class="card-body">
                     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
-                    <form method="post" action="/Account/Login">
+                    <form method="post" asp-action="Login" asp-controller="Account">
                         <div class="mb-3">
                             <label asp-for="Email" class="form-label">Email</label>
                             <input asp-for="Email" class="form-control" required autofocus />

@@ -8,6 +8,8 @@ using HazelnutVeb.Models;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
 using HazelnutVeb.Services;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Http; // Ensure this is present for Cookie options
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,13 +40,21 @@ builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", options =>
     {
         options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/Login";
     });
 
 builder.Services.AddAuthorization();
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    // Clear known proxies so it accepts headers from Render's load balancer
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 var app = builder.Build();
 
@@ -76,6 +86,8 @@ using (var scope = app.Services.CreateScope())
         db.SaveChanges();
     }
 }
+
+app.UseForwardedHeaders();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

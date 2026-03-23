@@ -28,13 +28,17 @@ namespace HazelnutVeb.Controllers
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+                ViewBag.Error = "Please fill in all required fields.";
                 return View(model);
+            }
 
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == model.Email);
+                .FirstOrDefaultAsync(u => u.Email != null && u.Email.ToLower() == model.Email.ToLower());
 
             if (user == null)
             {
+                Console.WriteLine($"Login failed: No user found with email {model.Email}");
                 ViewBag.Error = "Invalid email or password";
                 return View(model);
             }
@@ -43,6 +47,7 @@ namespace HazelnutVeb.Controllers
 
             if (!valid)
             {
+                Console.WriteLine($"Login failed: Invalid password for user {model.Email}");
                 ViewBag.Error = "Invalid email or password";
                 return View(model);
             }
@@ -58,7 +63,13 @@ namespace HazelnutVeb.Controllers
             var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-            await HttpContext.SignInAsync("CookieAuth", claimsPrincipal);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = model.RememberMe
+            };
+
+            await HttpContext.SignInAsync("CookieAuth", claimsPrincipal, authProperties);
+            Console.WriteLine($"Login success: User {model.Email} logged in.");
 
             return RedirectToAction("Index", "Home");
         }
