@@ -36,7 +36,7 @@ namespace HazelnutVeb.Controllers
                     .AsQueryable();
 
                 var email = User.Identity?.Name;
-                var currentUser = await _context.AppUsers.FirstOrDefaultAsync(u => u.Email == email);
+                var currentUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
                 if (currentUser != null && currentUser.Role != "Admin")
                 {
@@ -154,10 +154,10 @@ namespace HazelnutVeb.Controllers
 
                 try
                 {
-                    var user = await _context.AppUsers.FirstOrDefaultAsync(u => u.Email == email);
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
                     var fullName = user?.FullName ?? client.Name;
 
-                    var admins = await _context.AppUsers
+                    var admins = await _context.Users
                         .Where(u => u.Role == "Admin" && u.Email != email)
                         .ToListAsync();
 
@@ -216,7 +216,7 @@ namespace HazelnutVeb.Controllers
             {
                 try
                 {
-                    var user = await _context.AppUsers.FirstOrDefaultAsync(u => u.Email == reservation.Client.Email);
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == reservation.Client.Email);
                     var fullName = user?.FullName ?? reservation.Client.Name;
 
                     await _emailService.SendEmailAsync(
@@ -266,7 +266,7 @@ namespace HazelnutVeb.Controllers
             {
                 try
                 {
-                    var user = await _context.AppUsers.FirstOrDefaultAsync(u => u.Email == reservation.Client.Email);
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == reservation.Client.Email);
                     var fullName = user?.FullName ?? reservation.Client.Name;
 
                     await _emailService.SendEmailAsync(

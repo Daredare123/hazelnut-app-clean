@@ -19,14 +19,14 @@ namespace HazelnutVeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var users = await _context.AppUsers.ToListAsync();
+            var users = await _context.Users.ToListAsync();
             return View(users);
         }
 
         [HttpPost]
         public async Task<IActionResult> PromoteToAdmin(int id)
         {
-            var user = await _context.AppUsers.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user != null)
             {
                 if (user.Role != "Admin")
@@ -41,7 +41,7 @@ namespace HazelnutVeb.Controllers
         [HttpPost]
         public async Task<IActionResult> DemoteToClient(int id)
         {
-            var user = await _context.AppUsers.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user != null)
             {
                 // Prevent Admin from demoting themselves.

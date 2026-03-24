@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using HazelnutVeb.Models;
 
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 
 namespace HazelnutVeb.Data
 {
-    public class AppDbContext : IdentityDbContext<IdentityUser>
+    public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
@@ -18,7 +17,7 @@ namespace HazelnutVeb.Data
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<Inventory> Inventory { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
-        public DbSet<User> AppUsers { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
