@@ -105,12 +105,12 @@ namespace HazelnutVeb.Controllers
                 return View();
             }
 
-            // Create plain text user
+            // Create user
             var user = new User
             {
                 FullName = email,
                 Email = email,
-                PasswordHash = password, // Saved as plain text
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                 Role = "Client"
             };
 
