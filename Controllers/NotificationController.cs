@@ -31,7 +31,7 @@ namespace HazelnutVeb.Controllers
                 return Unauthorized();
             }
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _context.AppUsers.FirstOrDefaultAsync(u => u.Email == email);
             
             if (user != null)
             {

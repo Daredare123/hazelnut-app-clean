@@ -25,5 +25,10 @@ namespace HazelnutVeb.Models
 
         [Column("Email")]
         public string? Email { get; set; }
+
+        public string? UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public Microsoft.AspNetCore.Identity.IdentityUser? User { get; set; }
     }
 }
