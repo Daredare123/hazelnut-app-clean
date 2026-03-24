@@ -12,17 +12,10 @@ namespace HazelnutVeb.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<Microsoft.AspNetCore.Identity.IdentityUser> _userManager;
-        private readonly SignInManager<Microsoft.AspNetCore.Identity.IdentityUser> _signInManager;
         private readonly AppDbContext _context;
 
-        public AccountController(
-            UserManager<Microsoft.AspNetCore.Identity.IdentityUser> userManager,
-            SignInManager<Microsoft.AspNetCore.Identity.IdentityUser> signInManager,
-            AppDbContext context)
+        public AccountController(AppDbContext context)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
             _context = context;
         }
 
@@ -41,21 +34,41 @@ namespace HazelnutVeb.Controllers
                 return View(model);
             }
 
-            var result = await _signInManager.PasswordSignInAsync(
-                model.Email, 
-                model.Password, 
-                model.RememberMe, 
-                lockoutOnFailure: false);
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email != null && u.Email.ToLower() == model.Email.ToLower());
 
-            if (result.Succeeded)
+            if (user == null)
             {
-                Console.WriteLine($"Login success: User {model.Email} logged in via Identity.");
-                return RedirectToAction("Index", "Home");
+                ViewBag.Error = "Invalid email or password";
+                return View(model);
             }
 
-            Console.WriteLine($"Login failed: Identity login failed for {model.Email}");
-            ViewBag.Error = "Invalid email or password";
-            return View(model);
+            // Simple plain-text password comparison as requested
+            if (model.Password != user.PasswordHash)
+            {
+                ViewBag.Error = "Invalid email or password";
+                return View(model);
+            }
+
+            // Store user email and Id in session
+            HttpContext.Session.SetString("UserEmail", user.Email ?? string.Empty);
+            HttpContext.Session.SetInt32("UserId", user.Id);
+            HttpContext.Session.SetString("UserRole", user.Role ?? "Client");
+            
+            // To ensure existing [Authorize] attributes keep working, we also set CookieAuth.
+            // If you want pure session explicitly as requested for protecting pages, see the explanation.
+            var claims = new List<System.Security.Claims.Claim>
+            {
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, user.FullName ?? user.Email ?? string.Empty),
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Email, user.Email ?? string.Empty),
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, user.Role ?? "Client")
+            };
+
+            var claimsIdentity = new System.Security.Claims.ClaimsIdentity(claims, "CookieAuth");
+            var claimsPrincipal = new System.Security.Claims.ClaimsPrincipal(claimsIdentity);
+            await HttpContext.SignInAsync("CookieAuth", claimsPrincipal);
+
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -85,48 +98,49 @@ namespace HazelnutVeb.Controllers
                 return View();
             }
 
-            var identityUser = new Microsoft.AspNetCore.Identity.IdentityUser 
-            { 
-                UserName = email, 
-                Email = email 
+            // Check if user already exists
+            if (await _context.Users.AnyAsync(u => u.Email == email))
+            {
+                ViewBag.ErrorMessage = "Email is already registered.";
+                return View();
+            }
+
+            // Create plain text user
+            var user = new User
+            {
+                FullName = email,
+                Email = email,
+                PasswordHash = password, // Saved as plain text
+                Role = "Client"
             };
 
-            var result = await _userManager.CreateAsync(identityUser, password);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
-            if (result.Succeeded)
+            // Link to Clients table
+            bool clientExists = await _context.Clients.AnyAsync(c => c.Email == user.Email);
+            if (!clientExists)
             {
-                // Create linked Client record
                 var client = new Client
                 {
-                    Name = email,
-                    Email = email,
+                    Name = user.Email!,
+                    Email = user.Email,
                     Phone = "Unknown",
-                    City = "Unknown",
-                    UserId = identityUser.Id
+                    City = "Unknown"
                 };
-
                 _context.Clients.Add(client);
                 await _context.SaveChangesAsync();
-
-                // Sign in the newly registered user
-                await _signInManager.SignInAsync(identityUser, isPersistent: false);
-
-                return RedirectToAction("Index", "Home");
             }
 
-            // Aggregate Identity errors
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-
-            return View();
+            // Redirect to Login
+            return RedirectToAction("Login");
         }
 
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("Login", "Account");
+            HttpContext.Session.Clear();
+            await HttpContext.SignOutAsync("CookieAuth");
+            return RedirectToAction("Login");
         }
     }
 }
