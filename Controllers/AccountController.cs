@@ -43,7 +43,8 @@ namespace HazelnutVeb.Controllers
                 return View(model);
             }
 
-            bool valid = BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash);
+            // Compare plain text password as requested
+            bool valid = model.Password == user.PasswordHash;
 
             if (!valid)
             {
@@ -51,6 +52,11 @@ namespace HazelnutVeb.Controllers
                 ViewBag.Error = "Invalid email or password";
                 return View(model);
             }
+
+            // Set user info in Session
+            HttpContext.Session.SetString("UserEmail", user.Email ?? string.Empty);
+            HttpContext.Session.SetInt32("UserId", user.Id);
+            HttpContext.Session.SetString("UserFullName", user.FullName ?? string.Empty);
 
             var claims = new List<Claim>
             {
@@ -135,6 +141,9 @@ namespace HazelnutVeb.Controllers
 
         public async Task<IActionResult> Logout()
         {
+            // Clear session data
+            HttpContext.Session.Clear();
+            
             await HttpContext.SignOutAsync("CookieAuth");
             return RedirectToAction("Login");
         }
