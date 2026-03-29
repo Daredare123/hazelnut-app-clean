@@ -68,7 +68,14 @@ namespace HazelnutVeb.Controllers
             var claimsPrincipal = new System.Security.Claims.ClaimsPrincipal(claimsIdentity);
             await HttpContext.SignInAsync("CookieAuth", claimsPrincipal);
 
-            return RedirectToAction("Index", "Home");
+            if (user.Role == "Admin")
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+            else
+            {
+                return RedirectToAction("Index", "Client");
+            }
         }
 
         [HttpGet]
