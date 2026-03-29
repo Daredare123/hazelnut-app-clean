@@ -84,7 +84,7 @@ namespace HazelnutVeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(string email, string password, string confirmPassword)
+        public async Task<IActionResult> Register(string email, string password, string confirmPassword, string? fullName)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
@@ -110,7 +110,7 @@ namespace HazelnutVeb.Controllers
             // Create user
             var user = new User
             {
-                FullName = email,
+                FullName = fullName ?? "User",
                 Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                 Role = "Client"
