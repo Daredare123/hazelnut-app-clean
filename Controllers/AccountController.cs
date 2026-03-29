@@ -128,6 +128,11 @@ namespace HazelnutVeb.Controllers
             {
                 Console.WriteLine("ERROR saving user:");
                 Console.WriteLine(ex.Message);
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine("INNER EXCEPTION:");
+                    Console.WriteLine(ex.InnerException.Message);
+                }
             }
 
             // Link to Clients table
