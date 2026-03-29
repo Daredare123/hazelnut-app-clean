@@ -105,6 +105,8 @@ namespace HazelnutVeb.Controllers
                 return View();
             }
 
+            Console.WriteLine("Register started");
+            
             // Create user
             var user = new User
             {
@@ -115,7 +117,18 @@ namespace HazelnutVeb.Controllers
             };
 
             _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            Console.WriteLine("Before SaveChanges");
+            
+            try
+            {
+                await _context.SaveChangesAsync();
+                Console.WriteLine("User saved successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR saving user:");
+                Console.WriteLine(ex.Message);
+            }
 
             // Link to Clients table
             bool clientExists = await _context.Clients.AnyAsync(c => c.Email == user.Email);
