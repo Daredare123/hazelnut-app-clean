@@ -43,11 +43,11 @@ namespace HazelnutVeb.Controllers
                 return View(model);
             }
 
-            // Simple plain-text password comparison as requested
-            if (model.Password != user.PasswordHash)
+            // Compare hashed password natively
+            if (!BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
             {
                 ViewBag.Error = "Invalid email or password";
-                return View(model);
+                return View("Login", model);
             }
 
             // Store user email and Id in session
