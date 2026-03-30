@@ -70,7 +70,7 @@ namespace HazelnutVeb.Controllers
 
             if (user.Role == "Admin")
             {
-                return RedirectToAction("Index", "Admin");
+                return RedirectToAction("Dashboard", "Home");
             }
             else
             {
