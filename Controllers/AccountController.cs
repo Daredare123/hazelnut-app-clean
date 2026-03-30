@@ -64,9 +64,9 @@ namespace HazelnutVeb.Controllers
                 new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, user.Role ?? "Client")
             };
 
-            var claimsIdentity = new System.Security.Claims.ClaimsIdentity(claims, "CookieAuth");
+            var claimsIdentity = new System.Security.Claims.ClaimsIdentity(claims, "Cookies");
             var claimsPrincipal = new System.Security.Claims.ClaimsPrincipal(claimsIdentity);
-            await HttpContext.SignInAsync("CookieAuth", claimsPrincipal);
+            await HttpContext.SignInAsync("Cookies", claimsPrincipal);
 
             if (user.Role == "Admin")
             {
@@ -164,7 +164,7 @@ namespace HazelnutVeb.Controllers
         public async Task<IActionResult> Logout()
         {
             HttpContext.Session.Clear();
-            await HttpContext.SignOutAsync("CookieAuth");
+            await HttpContext.SignOutAsync("Cookies");
             return RedirectToAction("Login");
         }
     }
