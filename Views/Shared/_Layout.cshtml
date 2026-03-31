@@ -187,6 +187,7 @@
     </script>
     @if (User.Identity.IsAuthenticated)
     {
+        <input type="hidden" id="userEmail" value="@User.Identity.Name" />
         <script>
             async function enableNotifications() {
                 const permission = await Notification.requestPermission();
@@ -231,7 +232,10 @@
                             "Content-Type": "application/json"
                         },
                         credentials: "include",
-                        body: JSON.stringify({ token: token })
+                        body: JSON.stringify({ 
+                            token: token,
+                            email: document.getElementById("userEmail").value
+                        })
                     });
 
                     alert("Token saved ✅");

@@ -164,16 +164,8 @@ namespace HazelnutVeb.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveFcmToken([FromBody] TokenModel model)
         {
-            if (string.IsNullOrEmpty(model?.Token))
-            {
-                return BadRequest("Invalid token.");
-            }
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
 
-            var email = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
-            Console.WriteLine("EMAIL FROM CLAIMS: " + email);
-
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            
             if (user == null)
             {
                 Console.WriteLine("USER NOT FOUND ❌");
@@ -182,6 +174,9 @@ namespace HazelnutVeb.Controllers
 
             user.FcmToken = model.Token;
             await _context.SaveChangesAsync();
+
+            Console.WriteLine("TOKEN SAVED ✅");
+
             return Ok();
         }
 
