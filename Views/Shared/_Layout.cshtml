@@ -187,7 +187,7 @@
     </script>
     @if (User.Identity.IsAuthenticated)
     {
-        <input type="hidden" id="userEmail" value="@User.Identity.Name" />
+
         <script>
             async function enableNotifications() {
                 const permission = await Notification.requestPermission();
@@ -226,15 +226,16 @@
                 console.log("TOKEN:", token);
 
                 if (token) {
+                    const email = prompt("Enter your email:");
+
                     await fetch("/Account/SaveFcmToken", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
                         },
-                        credentials: "include",
-                        body: JSON.stringify({ 
+                        body: JSON.stringify({
                             token: token,
-                            email: document.getElementById("userEmail").value
+                            email: email
                         })
                     });
 
