@@ -211,7 +211,7 @@
                     
                     messaging.getToken({ vapidKey: "BI3HfXHngb4xF6vb7pgjqEjjN0FW2k-ilt6d7GtgD5lq7rX-5YhLpT5bt2PLXjfGQAqiJ5Gq7Q8tmcstRC_8PKo" }).then((currentToken) => {
                         if (currentToken) {
-                            fetch('/Notification/SaveToken', {
+                            fetch('/Account/SaveFcmToken', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ token: currentToken })
