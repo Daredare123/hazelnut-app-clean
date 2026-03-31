@@ -161,6 +161,30 @@ namespace HazelnutVeb.Controllers
             return RedirectToAction("Login");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SaveFcmToken([FromBody] TokenModel model)
+        {
+            if (string.IsNullOrEmpty(model?.Token))
+            {
+                return BadRequest("Invalid token.");
+            }
+
+            var email = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+            Console.WriteLine("EMAIL FROM CLAIMS: " + email);
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            
+            if (user == null)
+            {
+                Console.WriteLine("USER NOT FOUND ❌");
+                return BadRequest();
+            }
+
+            user.FcmToken = model.Token;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
         public async Task<IActionResult> Logout()
         {
             HttpContext.Session.Clear();
