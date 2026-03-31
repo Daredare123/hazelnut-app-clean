@@ -187,21 +187,10 @@
     </script>
     @if (User.Identity.IsAuthenticated)
     {
-        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
-        <script>
-            const firebaseConfig = {
-                apiKey: "AIzaSyDfhE0OubxHF-EEN_LkRm1Nm79gLraRM0Q",
-                authDomain: "hazelnutarena-e2297.firebaseapp.com",
-                projectId: "hazelnutarena-e2297",
-                storageBucket: "hazelnutarena-e2297.firebasestorage.app",
-                messagingSenderId: "279698258773",
-                appId: "1:279698258773:web:010cdbdbbe201ecde78ddc"
-            };
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            // Manual opt-in notification toggle required for iOS!
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+            import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-messaging.js";
+
             window.enableNotifications = async function () {
                 const permission = await Notification.requestPermission();
                 
@@ -209,26 +198,51 @@
                     console.log("Notifications allowed");
                     alert("Notifications enabled ✅");
                     
-                    messaging.getToken({ vapidKey: "BI3HfXHngb4xF6vb7pgjqEjjN0FW2k-ilt6d7GtgD5lq7rX-5YhLpT5bt2PLXjfGQAqiJ5Gq7Q8tmcstRC_8PKo" }).then((currentToken) => {
-                        if (currentToken) {
-                            fetch('/Account/SaveFcmToken', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ token: currentToken })
-                            }).then(response => {
-                                console.log('Firebase token synced.');
-                            }).catch(err => console.error('Error saving token', err));
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyDfhE0OubxHF-EEN_LkRm1Nm79gLraRM0Q",
+                        authDomain: "hazelnutarena-e2297.firebaseapp.com",
+                        projectId: "hazelnutarena-e2297",
+                        storageBucket: "hazelnutarena-e2297.firebasestorage.app",
+                        messagingSenderId: "279698258773",
+                        appId: "1:279698258773:web:010cdbdbbe201ecde78ddc"
+                    };
+
+                    const app = initializeApp(firebaseConfig);
+                    const messaging = getMessaging(app);
+
+                    try {
+                        const token = await getToken(messaging, { 
+                            vapidKey: "BI3HfXHngb4xF6vb7pgjqEjjN0FW2k-ilt6d7GtgD5lq7rX-5YhLpT5bt2PLXjfGQAqiJ5Gq7Q8tmcstRC_8PKo" 
+                        });
+
+                        if (token) {
+                            console.log("FCM TOKEN:", token);
+
+                            await fetch("/Account/SaveFcmToken", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({ token: token })
+                            });
                         }
-                    }).catch(err => console.log('Error getting token', err));
+                    } catch (err) {
+                        console.error("Error retrieving token:", err);
+                    }
                 } else {
                     console.log("Notifications denied");
                     alert("Notifications denied ❌");
                 }
             };
 
-            messaging.onMessage((payload) => {
-                console.log('Foreground message received. ', payload);
-            });
+            // Listen for foreground messages
+            if (typeof messaging !== 'undefined') {
+                import("https://www.gstatic.com/firebasejs/12.9.0/firebase-messaging.js").then((module) => {
+                    module.onMessage(messaging, (payload) => {
+                        console.log('Foreground message received. ', payload);
+                    });
+                });
+            }
         </script>
     }
     @await RenderSectionAsync("Scripts", required: false)
