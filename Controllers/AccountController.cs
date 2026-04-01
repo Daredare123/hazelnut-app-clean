@@ -91,11 +91,17 @@ namespace HazelnutVeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(string email, string password, string confirmPassword, string? fullName)
+        public async Task<IActionResult> Register(string email, string password, string confirmPassword, string fullName)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
                 ViewBag.ErrorMessage = "Email and password are required.";
+                return View();
+            }
+
+            if (string.IsNullOrEmpty(fullName))
+            {
+                ViewBag.ErrorMessage = "Full name is required.";
                 return View();
             }
 
@@ -117,7 +123,7 @@ namespace HazelnutVeb.Controllers
             // Create user
             var user = new User
             {
-                FullName = fullName ?? "User",
+                FullName = fullName,
                 Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                 Role = "Client"
