@@ -32,6 +32,9 @@ namespace HazelnutVeb.Controllers
             return View();
         }
 
+        // PWA must be installed from “/” root, otherwise iOS opens other routes in Safari
+        [Route("/")]
+        [Route("/Dashboard")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Dashboard()
         {
